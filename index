@@ -1,0 +1,529 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Deerkill Day Camp — Transportation Form</title>
+
+  <!--
+  ============================================================
+   DEERKILL DAY CAMP — Transportation Form Gateway
+   GitHub Pages version — single index.html
+
+   HOW IT WORKS:
+     • If the form is OPEN  → instant silent redirect (no page shown)
+     • If the form is CLOSED → this page displays with contact info
+
+   CONFIGURATION (edit these values):
+  ============================================================ -->
+  <script>
+    var CONFIG = {
+      FORM_URL:         'https://docs.google.com/forms/d/1FAIpQLSerV4-63I_0sAisrXoe9jxydHaiy41gkvWu_6erwsxfpDyeSQ/viewform',
+      CAMP_START:       { month: 5, day: 29 },   // June 29  (month = 0-indexed)
+      CAMP_END:         { month: 7, day: 20 },   // Aug 20
+      EXEMPT_MONTHS:    [{ month: 6, day: 3 }],  // July 3 — open all day
+      CLOSED_START_HR:  12,                       // 12:00 PM
+      CLOSED_END_HR:    17                        //  5:00 PM
+    };
+
+    function getET() {
+      return new Date(new Date().toLocaleString('en-US', { timeZone: 'America/New_York' }));
+    }
+
+    function isFormClosed() {
+      var et  = getET();
+      var dow = et.getDay();
+      if (dow === 0 || dow === 6) return false;
+
+      var m = et.getMonth(), d = et.getDate(), y = et.getFullYear();
+      var today = new Date(y, m, d);
+      var start = new Date(y, CONFIG.CAMP_START.month, CONFIG.CAMP_START.day);
+      var end   = new Date(y, CONFIG.CAMP_END.month,   CONFIG.CAMP_END.day);
+      if (today < start || today > end) return false;
+
+      var exempt = CONFIG.EXEMPT_MONTHS.some(function(x){ return x.month === m && x.day === d; });
+      if (exempt) return false;
+
+      var totalMin = et.getHours() * 60 + et.getMinutes();
+      return totalMin >= CONFIG.CLOSED_START_HR * 60 && totalMin < CONFIG.CLOSED_END_HR * 60;
+    }
+
+    // ---- Redirect immediately if form is open ----
+    if (!isFormClosed()) {
+      window.location.replace(CONFIG.FORM_URL);
+    }
+  </script>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=Abril+Fatface&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      --purple:      #462770;
+      --purple-dark: #2e1a4a;
+      --purple-mid:  #5c3690;
+      --purple-soft: #ede8f7;
+      --gold:        #F5B93E;
+      --gold-dark:   #d9a028;
+      --cream:       #fdf8f0;
+      --green:       #2d6a35;
+      --green-light: #e8f5ea;
+      --red-soft:    #fdf0f0;
+      --red-border:  #f0c8c8;
+      --red-text:    #b03030;
+      --text:        #2a1f3d;
+      --text-mid:    #5a4f6e;
+      --text-light:  #8a7faa;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html { height: 100%; }
+
+    body {
+      font-family: 'Nunito', sans-serif;
+      background: var(--cream);
+      min-height: 100%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      color: var(--text);
+      /* Subtle noise texture */
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E");
+    }
+
+    /* ── Header ─────────────────────────────── */
+    .site-header {
+      width: 100%;
+      background: var(--purple);
+      padding: 36px 24px 56px;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+
+    /* Diagonal stripe texture on header */
+    .site-header::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: repeating-linear-gradient(
+        -45deg,
+        transparent,
+        transparent 18px,
+        rgba(255,255,255,0.03) 18px,
+        rgba(255,255,255,0.03) 36px
+      );
+    }
+
+    /* Scalloped bottom edge */
+    .site-header::after {
+      content: '';
+      position: absolute;
+      bottom: -1px;
+      left: 0;
+      right: 0;
+      height: 28px;
+      background: var(--cream);
+      clip-path: ellipse(52% 100% at 50% 100%);
+    }
+
+    .header-inner { position: relative; z-index: 1; }
+
+    .deer-wrap {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 72px;
+      height: 72px;
+      background: rgba(245,185,62,0.15);
+      border: 2px solid rgba(245,185,62,0.35);
+      border-radius: 50%;
+      font-size: 2.2rem;
+      margin-bottom: 14px;
+      animation: float 3.5s ease-in-out infinite;
+    }
+
+    @keyframes float {
+      0%, 100% { transform: translateY(0); }
+      50%       { transform: translateY(-6px); }
+    }
+
+    .camp-name {
+      font-family: 'Abril Fatface', Georgia, serif;
+      color: var(--gold);
+      font-size: clamp(1.6rem, 5vw, 2.2rem);
+      letter-spacing: 0.02em;
+      line-height: 1.1;
+      margin-bottom: 6px;
+    }
+
+    .form-subtitle {
+      color: rgba(255,255,255,0.7);
+      font-size: 0.85rem;
+      text-transform: uppercase;
+      letter-spacing: 0.14em;
+      font-weight: 700;
+    }
+
+    /* ── Main card ───────────────────────────── */
+    .card {
+      background: #fff;
+      border-radius: 20px;
+      box-shadow: 0 8px 40px rgba(70,39,112,0.12);
+      max-width: 480px;
+      width: calc(100% - 32px);
+      margin: -20px auto 32px;
+      overflow: hidden;
+      animation: rise 0.5s ease both;
+    }
+
+    @keyframes rise {
+      from { opacity: 0; transform: translateY(16px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    .card-body { padding: 32px 28px; }
+
+    /* Status badge */
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: var(--red-soft);
+      color: var(--red-text);
+      border: 1.5px solid var(--red-border);
+      border-radius: 99px;
+      padding: 5px 14px 5px 10px;
+      font-size: 0.78rem;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.07em;
+      margin-bottom: 18px;
+    }
+
+    .badge-dot {
+      width: 8px; height: 8px;
+      background: var(--red-text);
+      border-radius: 50%;
+      animation: pulse 1.6s infinite;
+      flex-shrink: 0;
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50%       { opacity: 0.4; transform: scale(0.7); }
+    }
+
+    /* Heading */
+    h1 {
+      font-family: 'Abril Fatface', Georgia, serif;
+      font-size: clamp(1.4rem, 4.5vw, 1.75rem);
+      color: var(--purple);
+      line-height: 1.25;
+      margin-bottom: 12px;
+    }
+
+    .lede {
+      color: var(--text-mid);
+      font-size: 0.97rem;
+      line-height: 1.65;
+      margin-bottom: 22px;
+    }
+
+    /* Reopen box */
+    .reopen-box {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      background: var(--purple-soft);
+      border-left: 4px solid var(--purple);
+      border-radius: 0 12px 12px 0;
+      padding: 16px 18px;
+      margin-bottom: 28px;
+    }
+
+    .reopen-icon { font-size: 1.8rem; flex-shrink: 0; }
+
+    .reopen-label {
+      font-size: 0.72rem;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: var(--text-light);
+      font-weight: 700;
+      margin-bottom: 3px;
+    }
+
+    .reopen-time {
+      font-family: 'Abril Fatface', Georgia, serif;
+      font-size: 1.3rem;
+      color: var(--purple);
+      line-height: 1;
+    }
+
+    .reopen-note {
+      font-size: 0.8rem;
+      color: var(--text-light);
+      margin-top: 4px;
+    }
+
+    /* Divider */
+    .divider {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin: 4px 0 24px;
+      color: var(--text-light);
+      font-size: 0.78rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+    }
+    .divider::before, .divider::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: #e8e0f0;
+    }
+
+    /* Contact heading */
+    .contact-heading {
+      font-size: 1.05rem;
+      font-weight: 800;
+      color: var(--text);
+      margin-bottom: 6px;
+    }
+
+    .contact-sub {
+      font-size: 0.87rem;
+      color: var(--text-mid);
+      margin-bottom: 18px;
+      line-height: 1.5;
+    }
+
+    /* Contact buttons */
+    .contact-btns {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .btn {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      padding: 16px 20px;
+      border-radius: 12px;
+      text-decoration: none;
+      font-weight: 700;
+      font-size: 0.97rem;
+      transition: transform 0.12s, box-shadow 0.12s;
+      border: none;
+      cursor: pointer;
+    }
+
+    .btn:active { transform: scale(0.98); }
+
+    .btn-phone {
+      background: var(--purple);
+      color: #fff;
+      box-shadow: 0 4px 16px rgba(70,39,112,0.28);
+    }
+
+    .btn-phone:hover { background: var(--purple-mid); box-shadow: 0 6px 20px rgba(70,39,112,0.35); }
+
+    .btn-email {
+      background: var(--gold);
+      color: var(--purple-dark);
+      box-shadow: 0 4px 16px rgba(245,185,62,0.3);
+    }
+
+    .btn-email:hover { background: var(--gold-dark); }
+
+    .btn-icon {
+      width: 38px; height: 38px;
+      border-radius: 8px;
+      background: rgba(255,255,255,0.18);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.2rem;
+      flex-shrink: 0;
+    }
+
+    .btn-email .btn-icon { background: rgba(70,39,112,0.12); }
+
+    .btn-text { text-align: left; }
+    .btn-label { font-size: 0.72rem; opacity: 0.75; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; display: block; margin-bottom: 2px; }
+    .btn-value { font-size: 1rem; font-weight: 800; display: block; }
+
+    /* ── Tree silhouettes footer ─────────────── */
+    .tree-strip {
+      width: 100%;
+      max-width: 520px;
+      margin: 0 auto 8px;
+      opacity: 0.18;
+    }
+
+    /* ── Footer ─────────────────────────────── */
+    .site-footer {
+      text-align: center;
+      color: var(--text-light);
+      font-size: 0.75rem;
+      padding: 0 16px 32px;
+    }
+
+    /* Current time display */
+    .current-time {
+      display: inline-block;
+      background: rgba(70,39,112,0.07);
+      color: var(--text-mid);
+      font-size: 0.78rem;
+      font-weight: 700;
+      padding: 5px 14px;
+      border-radius: 99px;
+      margin-bottom: 20px;
+      letter-spacing: 0.05em;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ── Header ── -->
+  <header class="site-header">
+    <div class="header-inner">
+      <div class="deer-wrap">🦌</div>
+      <div class="camp-name">Deerkill Day Camp</div>
+      <div class="form-subtitle">Transportation Change Form</div>
+    </div>
+  </header>
+
+  <!-- ── Card ── -->
+  <main class="card">
+    <div class="card-body">
+
+      <div class="badge">
+        <span class="badge-dot"></span>
+        Form Unavailable Right Now
+      </div>
+
+      <h1>Our buses are getting ready&nbsp;— we'll be back at&nbsp;5!</h1>
+
+      <p class="lede">
+        To make sure our transportation team can safely finalize every
+        bus assignment before dismissal, we close this form each camp
+        day at noon. It reopens automatically once the buses are on
+        their way home.
+      </p>
+
+      <div class="reopen-box">
+        <div class="reopen-icon">🕔</div>
+        <div>
+          <div class="reopen-label">Form reopens today at</div>
+          <div class="reopen-time">5:00 PM</div>
+          <div class="reopen-note">No need to refresh — just come back after 5!</div>
+        </div>
+      </div>
+
+      <div class="divider">Need it sooner?</div>
+
+      <p class="contact-heading">Our office team is here to help.</p>
+      <p class="contact-sub">
+        If you have an urgent transportation need that can't wait
+        until 5&nbsp;PM, reach out to us directly:
+      </p>
+
+      <div class="contact-btns">
+        <a class="btn btn-phone" href="tel:+18453541466">
+          <div class="btn-icon">📞</div>
+          <div class="btn-text">
+            <span class="btn-label">Call the camp office</span>
+            <span class="btn-value">845-354-1466</span>
+          </div>
+        </a>
+        <a class="btn btn-email" href="mailto:office@deerkilldaycamp.com">
+          <div class="btn-icon">✉️</div>
+          <div class="btn-text">
+            <span class="btn-label">Email us at</span>
+            <span class="btn-value">office@deerkilldaycamp.com</span>
+          </div>
+        </a>
+      </div>
+
+    </div><!-- /.card-body -->
+  </main>
+
+  <!-- Tree silhouettes -->
+  <svg class="tree-strip" viewBox="0 0 480 60" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+    <!-- repeating pine tree shapes -->
+    <g fill="#462770">
+      <polygon points="24,0 0,40 48,40"/>
+      <polygon points="24,18 4,52 44,52"/>
+      <rect x="20" y="52" width="8" height="8"/>
+
+      <polygon points="72,0 52,36 92,36"/>
+      <polygon points="72,16 56,46 88,46"/>
+      <rect x="68" y="46" width="8" height="8"/>
+
+      <polygon points="116,4 98,38 134,38"/>
+      <polygon points="116,20 102,48 130,48"/>
+      <rect x="112" y="48" width="8" height="8"/>
+
+      <polygon points="160,0 140,40 180,40"/>
+      <polygon points="160,18 144,52 176,52"/>
+      <rect x="156" y="52" width="8" height="8"/>
+
+      <polygon points="200,6 184,38 216,38"/>
+      <polygon points="200,22 188,48 212,48"/>
+      <rect x="196" y="48" width="8" height="8"/>
+
+      <polygon points="244,0 224,40 264,40"/>
+      <polygon points="244,18 228,52 260,52"/>
+      <rect x="240" y="52" width="8" height="8"/>
+
+      <polygon points="288,4 270,38 306,38"/>
+      <polygon points="288,20 274,48 302,48"/>
+      <rect x="284" y="48" width="8" height="8"/>
+
+      <polygon points="330,0 310,40 350,40"/>
+      <polygon points="330,18 314,52 346,52"/>
+      <rect x="326" y="52" width="8" height="8"/>
+
+      <polygon points="374,4 356,38 392,38"/>
+      <polygon points="374,20 360,48 388,48"/>
+      <rect x="370" y="48" width="8" height="8"/>
+
+      <polygon points="416,0 396,40 436,40"/>
+      <polygon points="416,18 400,52 432,52"/>
+      <rect x="412" y="52" width="8" height="8"/>
+
+      <polygon points="458,4 440,38 476,38"/>
+      <polygon points="458,20 444,48 472,48"/>
+      <rect x="454" y="48" width="8" height="8"/>
+    </g>
+  </svg>
+
+  <!-- ── Footer ── -->
+  <footer class="site-footer">
+    <div id="current-time" class="current-time"></div>
+    <div>© Deerkill Day Camp &nbsp;·&nbsp; Pomona, NY</div>
+  </footer>
+
+  <script>
+    // Show current Eastern time in footer
+    function updateTime() {
+      var et = new Date(new Date().toLocaleString('en-US', { timeZone: 'America/New_York' }));
+      var h = et.getHours(), m = et.getMinutes();
+      var ampm = h >= 12 ? 'PM' : 'AM';
+      h = h % 12 || 12;
+      var ms = m < 10 ? '0' + m : m;
+      var days = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+      var months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+      var label = days[et.getDay()] + ', ' + months[et.getMonth()] + ' ' + et.getDate()
+                + '  ·  ' + h + ':' + ms + ' ' + ampm + ' ET';
+      document.getElementById('current-time').textContent = label;
+    }
+    updateTime();
+    setInterval(updateTime, 30000);
+  </script>
+
+</body>
+</html>
