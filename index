@@ -18,7 +18,7 @@
   ============================================================ -->
   <script>
     var CONFIG = {
-      FORM_URL:         'https://docs.google.com/forms/d/1FAIpQLSerV4-63I_0sAisrXoe9jxydHaiy41gkvWu_6erwsxfpDyeSQ/viewform',
+      FORM_URL:         'https://docs.google.com/forms/d/e/1FAIpQLSerV4-63I_0sAisrXoe9jxydHaiy41gkvWu_6erwsxfpDyeSQ/viewform',
       CAMP_START:       { month: 5, day: 29 },   // June 29  (month = 0-indexed)
       CAMP_END:         { month: 7, day: 20 },   // Aug 20
       EXEMPT_MONTHS:    [{ month: 6, day: 3 }],  // July 3 — open all day
